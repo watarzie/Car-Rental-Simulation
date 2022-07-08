@@ -10,10 +10,10 @@ namespace UI
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var item in carManager.GetCarsByBrandId(5))
+            BrandManager brandManager = new BrandManager(new EfBrandDal());
+            foreach (var item in brandManager.GetAll())
             {
-                Console.WriteLine(item.Descriptions);
+                Console.WriteLine(item.BrandName);
 
             }
         }
