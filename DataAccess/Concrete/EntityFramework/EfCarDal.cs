@@ -1,5 +1,7 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,58 +12,33 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfCarDal : ICarDal
+    public class EfCarDal : EfEntityRepositoryBase<Car, RecapProjectContext>, ICarDal
     {
-        public void Add(Car entity)
+        public List<CarDetailDto> GetCarsDetail()
         {
-            using(RecapProjectContext context=new RecapProjectContext())
+            using (RecapProjectContext context=new RecapProjectContext())
             {
-                var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Added;
-                context.SaveChanges();
+                var result = from c in context.Cars
+                             join d in context.Colors
+                             on c.ColorId equals d.ColorId
+                             join b in context.Brands
+                             on c.BrandId equals b.BrandId
+   
+                             select new CarDetailDto
+                             {
+                                 CarId = c.CarId,
+                                 CarName = b.BrandName,
+                                 ColorName = d.ColorName
+
+                             };
+                return result.ToList();
+                           
+                           
+                           
+                           
+
+                           
             }
         }
-
-        public void Delete(Car entity)
-        {
-            using (RecapProjectContext context = new RecapProjectContext())
-            {
-                var deletedEntity = context.Entry(entity);
-                deletedEntity.State = EntityState.Deleted;
-                context.SaveChanges();
-            }
-        }
-
-        public Car Get(Expression<Func<Car, bool>> filter)
-        {
-            using (RecapProjectContext context = new RecapProjectContext())
-            {
-                return context.Set<Car>().SingleOrDefault(filter);
-            }
-        }
-
- 
-
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
-        {
-            using (RecapProjectContext context = new RecapProjectContext())
-            {
-                return filter == null
-                    ? context.Set<Car>().ToList()
-                    : context.Set<Car>().Where(filter).ToList();
-            }
-        }
-
-        public void Update(Car entity)
-        {
-            using (RecapProjectContext context = new RecapProjectContext())
-            {
-                var updatedEntity = context.Entry(entity);
-                updatedEntity.State = EntityState.Modified;
-                context.SaveChanges();
-            }
-        }
-
-        
     }
 }
