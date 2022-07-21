@@ -11,8 +11,43 @@ namespace UI
         static void Main(string[] args)
         {
             //BrandTest();
+            //GetCarsDetail();
+            //ResultsTest();
+
+         
+            
+            
+            
+
+            RentalManager rentalManager = new RentalManager(new EfRentalDal());
+            Rental rental = new Rental()
+            {
+                CarId = 2,
+                CustomerId = 2,
+                RentDate = new DateTime(2022, 07, 28),
+                ReturnDate = new DateTime(2022, 07, 29)
+            };
+            
+            Console.WriteLine(rentalManager.Add(rental).Message);
+            
+            
+            
+
+        }
+
+        private static void ResultsTest()
+        {
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var car in carManager.GetCarsDetail())
+            foreach (var car in carManager.GetAll().Data)
+            {
+                Console.WriteLine(car.Descriptions);
+            }
+        }
+
+        private static void GetCarsDetail()
+        {
+            CarManager carManager = new CarManager(new EfCarDal());
+            foreach (var car in carManager.GetCarsDetail().Data)
             {
                 Console.WriteLine(car.CarId + " " + car.CarName + " " + car.ColorName);
             }
